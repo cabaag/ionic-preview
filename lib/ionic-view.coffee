@@ -1,27 +1,34 @@
-{$, ScrollView} = require 'atom'
-
+{$, ScrollView, View} = require 'atom'
 module.exports =
-class WebBrowserPreviewView extends ScrollView
+class WebBrowserPreview extends View
    @content: (params) ->
-      @iframe outlet: "frame", class: "iphone", src: params.url, sandbox: "allow-same-origin allow-scripts"
+      @div =>
+         @h1 'Hola'
+         @iframe name:"frame", class: "iphone", src: params.url, sandbox: "allow-same-origin allow-scripts"
+
    getTitle: ->
       "Ionic: Preview"
+
    initialize: (params) ->
       me = $(@)
+      frame = me.children("[name='frame']")
+      console.log(frame)
       @url = params.url
-      @.on 'load', ->
-         $(window).on 'resize', ->
-            height = me[0].parentNode?.scrollHeight
-            if height? and height < me.height()
-               me.css("transform", "scale(" + ((height - 100) / me.height()) + ")")
+      me.load ->
+         $(window).resize ->
+            height = frame.parentNode?.scrollHeight
+            if height < frame.height()
+               frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
             else
-               me.css("transform", "none")
+               frame.css("transform", "none")
+
    go: ->
       me = $(@)
       @.src = @url
-      height = me[0].parentNode?.scrollHeight
+      frame = me.children("[name='frame']")
+      height = frame[0].parentNode?.scrollHeight
       if height? and height < me.height()
-         me.css("transform", "scale(" + ((height - 100) / me.height()) + ")")
+         frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
       else
-         me.css("transform", "none")
-      me.css("display", "block")
+         frame.css("transform", "none")
+      frame.css("display", "block")

@@ -1,13 +1,13 @@
-WebBrowserPreviewView = require './ionic-view'
+WebBrowserPreview = require './ionic-view'
 url = require "url"
 http = require("http")
 
 module.exports =
    activate: ->
       atom.commands.add 'atom-text-editor', 'ionic: preview', ->
-         atom.workspace.open "ionic://localhost:8100", split: "right"
+         atom.workspace.open "ionic://localhost:8100", split: "right", activatePane: true
 
-      atom.workspace.registerOpener (uri) ->
+      atom.workspace.addOpener (uri) ->
          try
             {protocol, host, pathname} = url.parse(uri)
          catch
@@ -16,8 +16,7 @@ module.exports =
 
          uri = url.parse(uri)
          uri.protocol = "http:"
-
-         preview = new WebBrowserPreviewView(url: uri.format())
+         preview = new WebBrowserPreview(url: uri.format())
 
          http.get(uri.format(), ->
             preview.go()
