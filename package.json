@@ -1,16 +1,15 @@
 {
-  "name": "ionic-preview",
-  "main": "./lib/ionic-preview",
-  "version": "0.0.0",
-  "description": "A short description of your package",
-  "activationCommands": {
-    "atom-workspace": "ionic-preview:toggle"
-  },
-  "repository": "https://github.com/atom/ionic-preview",
-  "license": "MIT",
-  "engines": {
-    "atom": ">=0.174.0 <2.0.0"
-  },
-  "dependencies": {
-  }
+	"name": "ionic-preview",
+	"main": "./lib/ionic-preview",
+	"version": "0.0.1",
+	"description": "A short description of your package",
+	"activationCommands": {
+		"atom-workspace": "ionic:preview"
+	},
+	"repository": "https://github.com/cabaag/ionic-preview",
+	"license": "MIT",
+	"engines": {
+		"atom": ">=0.174.0 <2.0.0"
+	},
+	"dependencies": {}
 }

@@ -1,0 +1,10 @@
+{
+	"indentation": {
+		"value": 3,
+		"level": "error"
+	},
+	"max_line_length": {
+		"value": 120,
+		"level": "error"
+	}
+}
