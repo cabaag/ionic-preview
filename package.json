@@ -1,7 +1,7 @@
 {
 	"name": "ionic-preview",
 	"main": "./lib/ionic-preview",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Show a preview of your ionic app",
 	"activationCommands": {
 		"atom-workspace": "ionic:preview"
