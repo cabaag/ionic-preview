@@ -10,16 +10,15 @@ in an atom pane.
 In your terminal:
 '''
 apm install ionic-preview
-ionic serve -b
+ionic serve
 '''
 
-Then hit `Cmd + Shift + P` in atom and use the command `Ionic: Preview`
+Then hit `Cmd + Shift + P` in atom and use the command `Ionic: preview`
 
 (note: if you don't see `Ionic: Preview` in the list you may need to restart atom)
 
 This will open a new pane with your app displayed in it.
 
 ## TODO
-* Auto-start the ionic server
 * Multiple views
 * Specs

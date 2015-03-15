@@ -7,38 +7,38 @@ class WebBrowserPreview extends View
    @process: null
 
    @content: (params) ->
-      @div =>
-         @h1 'Hola'
-         @iframe id:"frame", class: "iphone", src: params.url, sandbox: "allow-same-origin allow-scripts"
+      @iframe id:"frame", class: "iphone", src: params.url, sandbox: "allow-same-origin allow-scripts"
 
    getTitle: ->
       "Ionic: Preview"
 
    initialize: (params) ->
       me = $(@)
-      frame = me.children("#frame")
+      # frame = me.children("#frame")
       @url = params.url
-      me.load ->
-         $(window).resize ->
-            height = frame.parentNode?.scrollHeight
-            if height < frame.height()
-               frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
+      @.on 'load', ->
+         $(window).on 'resize', ->
+            height = me[0].parentNode?.scrollHeight
+            if height < me.height()
+               me.css("transform", "scale(" + ((height - 100) / me.height()) + ")")
             else
-               frame.css("transform", "none")
+               me.css("transform", "none")
 
    openViewer: ->
       me = @
       http.get(@url, ->
-         console.log("Preview")
          me.go()
          atom.workspace.activateNextPane()
       ).on('error', ->
          atom.workspace.destroyActivePaneItem()
-         me.startServe()
-         setTimeout( ->
-            atom.workspace.open "ionic://localhost:8100", split: "right"
-            me.openViewer()
-         , 2000)
+         if not atom.config.get 'ionic-preview.auto_start_serve'
+            alert "First start ionic serve"
+         else
+            me.startServe()
+            setTimeout( ->
+               atom.workspace.open "ionic://localhost:8100", split: "right"
+               me.openViewer()
+            , 2000)
       )
 
    startServe :->
@@ -57,13 +57,13 @@ class WebBrowserPreview extends View
    go: ->
       me = $(@)
       @.src = @url
-      frame = me.children("#frame")
-      height = frame[0].parentNode?.scrollHeight
+      # frame = me.children("#frame")
+      height = me[0].parentNode?.scrollHeight
       if height? and height < me.height()
-         frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
+         me.css("transform", "scale(" + ((height - 50) / me.height()) + ")")
       else
-         frame.css("transform", "none")
-      frame.css("display", "block")
+         me.css("transform", "none")
+      me.css("display", "block")
 
    destroy: ->
       if @process?
