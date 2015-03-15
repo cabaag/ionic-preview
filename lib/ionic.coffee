@@ -1,11 +1,11 @@
 WebBrowserPreview = require './ionic-view'
 url = require "url"
-http = require("http")
 
 module.exports =
+
    activate: ->
       atom.commands.add 'atom-text-editor', 'ionic: preview', ->
-         atom.workspace.open "ionic://localhost:8100", split: "right", activatePane: true
+         atom.workspace.open "ionic://localhost:8100", split: "right"
 
       atom.workspace.addOpener (uri) ->
          try
@@ -18,12 +18,8 @@ module.exports =
          uri.protocol = "http:"
          preview = new WebBrowserPreview(url: uri.format())
 
-         http.get(uri.format(), ->
-            preview.go()
-            atom.workspace.activateNextPane()
-         ).on('error', ->
-            atom.workspace.destroyActivePaneItem()
-            alert("You have to start the ionic server first!")
-         )
-
+         preview.openViewer()
          return preview
+
+   destroy  : ->
+      preview.destroy()
