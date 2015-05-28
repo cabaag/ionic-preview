@@ -1,4 +1,5 @@
-{$, ScrollView, View, BufferedProcess} = require 'atom'
+{$, ScrollView, View} = require 'atom-space-pen-views'
+{BufferedProcess} = require 'atom'
 http = require "http"
 url = require "url"
 
