@@ -1,25 +1,40 @@
 WebBrowserPreview = require './ionic-view'
-url = require "url"
+{CompositeDisposable} = require 'atom'
+url = require 'url'
 
 module.exports =
+  ionicPreviewView: null
 
-   activate: ->
-      atom.commands.add 'atom-text-editor', 'ionic: preview', ->
-         atom.workspace.open "ionic://localhost:8100", split: "right"
+  config:
+    autoStartServe:
+      title: 'Autostart Serve'
+      description: 'Automatically start ionic serve'
+      type: 'boolean'
+      default: false
 
-      atom.workspace.addOpener (uri) ->
-         try
-            {protocol, host, pathname} = url.parse(uri)
-         catch
-            return
-         return unless protocol is "ionic:"
+  activate: ->
+    @subscriptions = new CompositeDisposable
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'ionic:preview': =>@preview()
 
-         uri = url.parse(uri)
-         uri.protocol = "http:"
-         preview = new WebBrowserPreview(url: uri.format())
+    @subscriptions.add atom.workspace.addOpener (uri)->
+      try
+        {protocol, host, pathname} = url.parse(uri)
+      catch
+        returns
+      return unless protocol is "ionic:"
 
-         preview.openViewer()
-         return preview
+      uri = url.parse(uri)
+      uri.protocol = "http:"
+      preview = new WebBrowserPreview(url: uri.format())
 
-   destroy  : ->
-      preview.destroy()
+      preview.openViewer()
+      preview
+
+  preview: ->
+    atom.workspace.open "ionic://localhost:8100", split: "right"
+
+  # destroy: ->
+  #   console.log "Destroying"
+  #   @subscriptions.dispose()
+  #   preview.destroy()

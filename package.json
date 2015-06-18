@@ -4,7 +4,7 @@
   "version": "0.3.4",
   "description": "Show a preview of your ionic apps",
   "activationCommands": {
-    "atom-workspace": "ionic: preview"
+    "atom-workspace": "ionic:preview"
   },
   "repository": "https://github.com/cabaag/ionic-preview",
   "license": "MIT",
