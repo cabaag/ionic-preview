@@ -29,6 +29,7 @@ module.exports =
       preview = new WebBrowserPreview(url: uri.format())
 
       preview.openViewer()
+      console.log preview
       preview
 
   preview: ->

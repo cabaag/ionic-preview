@@ -5,14 +5,12 @@ url = require "url"
 
 module.exports =
 class WebBrowserPreview extends View
-  @bufferedProcess = null
-
   @content: (params) ->
     @div =>
       class: "ionic-preview"
       # @button "Shutdown",
       #   id: "shutdown-serve"
-        # click: "shutdownServe"
+      #   click: "shutdownServe"
       @iframe
         id:"frame"
         class: "iphone"
@@ -45,16 +43,12 @@ class WebBrowserPreview extends View
         alert "First start ionic serve"
       else
         me.startServe()
-        setTimeout ->
-          atom.workspace.open "ionic://localhost:8100", split: "right"
-          me.openViewer()
-        , 2000
 
   go: ->
     me = $(@)
     frame = $(me.find('#frame')[0])
     @.src = @url
-    console.log frame
+    # console.log frame
     height = me[0].parentNode?.scrollHeight
     if height? and height < frame.height()
       frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
@@ -63,13 +57,29 @@ class WebBrowserPreview extends View
     frame.css("display", "block")
 
   startServe: ->
+    me = @
     command = 'ionic'
     args = ['serve', '-b']
     path = atom.project.getPaths()[0]
     options = {cwd: path}
-    stdout = (output)-> console.log(output)
+    startedServer = new RegExp("Running dev server")
+    stdout = (output)->
+      if /error/ig.exec(output)
+        alert output
+      if startedServer.test(output)
+        setTimeout ->
+          atom.workspace.open "ionic://localhost:8100", split: "right"
+          me.openViewer()
+        , 2000
     exit = (code)->
       console.log("ionic serve exited with #{code}")
-      @bufferedProcess = null
-    @bufferedProcess = new BufferedProcess(
-      {command, args, options, stdout, exit})
+    @bufferedProcess = new BufferedProcess({command, args, options, stdout, exit})
+
+  # shutdownServe: ->
+  #   console.log @bufferedProcess
+  #   me = @
+  #   console.log me
+  #   if @bufferedProcess?
+  #     console.log "Killing"
+  #     @bufferedProcess.kill()
+  #   atom.workspace.destroyActivePaneItem()
