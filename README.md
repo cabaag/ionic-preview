@@ -19,6 +19,8 @@ Then hit `Cmd + Shift + P` in atom and use the command `Ionic: preview`
 
 This will open a new pane with your app displayed in it.
 
+Use `ionic serve -b` to start the livereload service without opening your browser
+
 ## TODO
 * Multiple views
 * Specs
