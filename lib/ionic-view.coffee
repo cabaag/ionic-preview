@@ -1,21 +1,22 @@
 {$, View} = require 'atom-space-pen-views'
-{BufferedProcess} = require 'atom'
+{BufferedProcess, BufferedNodeProcess} = require 'atom'
 http = require "http"
 url = require "url"
 
 module.exports =
 class WebBrowserPreview extends View
   @content: (params) ->
-    @div =>
-      class: "ionic-preview"
+    @div
+      id: "ionic-preview"
+      =>
       # @button "Shutdown",
       #   id: "shutdown-serve"
       #   click: "shutdownServe"
-      @iframe
-        id:"frame"
-        class: "iphone"
-        src: params.url
-        sandbox: "allow-same-origin allow-scripts"
+        @iframe
+          id: "frame"
+          class: "iphone"
+          src: params.url
+          sandbox: "allow-same-origin allow-scripts"
 
   getTitle: ->
     "Ionic: Preview"
@@ -66,14 +67,19 @@ class WebBrowserPreview extends View
     stdout = (output)->
       if /error/ig.exec(output)
         alert output
-      if startedServer.test(output)
-        setTimeout ->
-          atom.workspace.open "ionic://localhost:8100", split: "right"
-          me.openViewer()
-        , 2000
+
+      # if startedServer.test(output)
+      #   setTimeout ->
+      #     atom.workspace.open "ionic://localhost:8100", split: "right"
+      #     me.openViewer()
+      #   , 3000
     exit = (code)->
+      alert code
       console.log("ionic serve exited with #{code}")
-    @bufferedProcess = new BufferedProcess({command, args, options, stdout, exit})
+
+    @process = new BufferedProcess({command, args, options, stdout, exit})
+    atom.workspace.open "ionic://localhost:8100", split: "right"
+
 
   # shutdownServe: ->
   #   console.log @bufferedProcess
