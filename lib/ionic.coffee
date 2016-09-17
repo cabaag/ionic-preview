@@ -10,12 +10,12 @@ module.exports =
       description: 'Automatically start ionic serve'
       type: 'boolean'
       default: false
-    addressCustom:
+    customAddress:
       title: 'Address'
       description: 'Changes address for ionic-view'
       type: 'string'
       default: 'localhost'
-    portCustom:
+    customPort:
       title: 'Port'
       description: 'Changes port for ionic-view'
       type: 'integer'
@@ -43,8 +43,8 @@ module.exports =
       preview
 
   preview: ->
-    address =  atom.config.get('ionic-preview.addressCustom')
-    port = atom.config.get('ionic-preview.portCustom')
+    address =  atom.config.get('ionic-preview.customAddress')
+    port = atom.config.get('ionic-preview.customPort')
     atom.workspace.open "ionic://#{address}:#{port}", split: "right"
 
   destroy: ->

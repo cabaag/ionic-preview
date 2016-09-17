@@ -28,11 +28,16 @@ class WebBrowserPreview extends View
 
   initialize: (params) ->
     @url = params.url
-    @address = atom.config.get('ionic-preview.addressCustom')
-    @port = atom.config.get('ionic-preview.portCustom')
+    @address = atom.config.get('ionic-preview.customAddress')
+    @port = atom.config.get('ionic-preview.customPort')
     if atom.config.get 'ionic-preview.autoStartServe'
-      alert "Starting ionic serve"
-      @startServe()
+      # Open browser if auto start serve but theres and external
+      # existing process of ionic serve
+      http.get @url, =>
+        @openViewer()
+      .on 'error', (error)=>
+        alert "Starting serve"
+        @startServe()
     # Resize the viewer
     # $(window).resize ->
     #   console.log "resize"
@@ -49,7 +54,6 @@ class WebBrowserPreview extends View
 
   openViewer: ->
     # Open viewer on right if cant auto start serve if its configurated
-    console.log @url
     http.get @url, =>
       @init()
     .on 'error', (error)->
@@ -84,7 +88,7 @@ class WebBrowserPreview extends View
     addressTmp = frame.src.replace(/http:\/\//, '').replace(/:.*\//, '')
     portTmp = frame.src.replace(/http.*:/, '').replace(/:.*\//, '').replace(/\//, '')
     portTmp = parseInt(portTmp)
-    return @address is addressTmp and @port is portTmp
+    @address is addressTmp and @port is portTmp
 
   startServe: ->
     command = 'ionic'
@@ -100,7 +104,7 @@ class WebBrowserPreview extends View
       if startedServer.test(output)
         setTimeout ->
           frame.contentWindow.location.reload(true)
-        , 1000
+        , 2000
     exit = (code)->
       alert code
       console.error("ionic serve exited with #{code}")
@@ -110,6 +114,6 @@ class WebBrowserPreview extends View
 
   shutdownServe: =>
     if @bufferedProcess?
-      console.log "Killing"
       @bufferedProcess.kill()
     atom.workspace.destroyActivePaneItem()
+    return
