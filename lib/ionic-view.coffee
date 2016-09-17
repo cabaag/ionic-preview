@@ -1,5 +1,5 @@
-{$, View} = require 'atom-space-pen-views'
-{BufferedProcess, BufferedNodeProcess} = require 'atom'
+{ $, View } = require 'atom-space-pen-views'
+{ BufferedProcess } = require 'atom'
 http = require "http"
 url = require "url"
 
@@ -9,9 +9,14 @@ class WebBrowserPreview extends View
     @div
       id: "ionic-preview"
       =>
-      # @button "Shutdown",
-      #   id: "shutdown-serve"
-      #   click: "shutdownServe"
+        @div
+          id: 'header'
+          =>
+            @div 'localhost:8100',
+              id: 'address'
+            @button "Shutdown",
+              id: "shutdown-serve"
+              click: "shutdownServe"
         @iframe
           id: "frame"
           class: "iphone"
@@ -22,70 +27,89 @@ class WebBrowserPreview extends View
     "Ionic: Preview"
 
   initialize: (params) ->
-    me = $(@)
     @url = params.url
-    @.on 'load', ->
-      $(window).on 'resize', ->
-        console.log "Resizing"
-        height = me[0].parentNode?.scrollHeight
-        if height < me.height()
-          me.css("transform", "scale( #{(height - 100) / me.height()} )")
-        else
-          me.css("transform", "none")
+    @address = atom.config.get('ionic-preview.addressCustom')
+    @port = atom.config.get('ionic-preview.portCustom')
+    if atom.config.get 'ionic-preview.autoStartServe'
+      alert "Starting ionic serve"
+      @startServe()
+    # Resize the viewer
+    # $(window).resize ->
+    #   console.log "resize"
+    #   height = me[0].parentNode?.scrollHeight
+    #   console.log height
+    #   console.log me.height()
+    #   if height < me.height()
+    #     me.css("transform", "scale( #{(height - 100) / me.height()} )")
+    #   else
+    #     me.css("transform", "none")
+
+  detached: ->
+    @shutdownServe()
 
   openViewer: ->
-    me = @
-    http.get @url, ->
-      me.go()
-      atom.workspace.activateNextPane()
-    .on 'error', ->
+    # Open viewer on right if cant auto start serve if its configurated
+    console.log @url
+    http.get @url, =>
+      @init()
+    .on 'error', (error)->
       atom.workspace.destroyActivePaneItem()
       if not atom.config.get 'ionic-preview.autoStartServe'
         alert "First start ionic serve"
-      else
-        me.startServe()
 
-  go: ->
-    me = $(@)
-    frame = $(me.find('#frame')[0])
-    @.src = @url
-    # console.log frame
-    height = me[0].parentNode?.scrollHeight
-    if height? and height < frame.height()
-      frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
+
+  init: ->
+    frame = $(@find('#frame')[0])
+    if @checkFrameAddress()
+      # Resize the iframe to match the container
+      height = @[0].parentNode?.scrollHeight
+      if height? and height < frame.height()
+        frame.css("transform", "scale(" + ((height - 50) / frame.height()) + ")")
+      else
+        frame.css("transform", "none")
+      frame.css("display", "block")
+
+      # Changes the address of ionic serve
+      $(document).ready =>
+        $('#header #address').text("#{@address}:#{@port}")
     else
-      frame.css("transform", "none")
-    frame.css("display", "block")
+      alert 'Address or port doesnt match with the settings'
+      atom.workspace.destroyActivePaneItem()
+    return
+
+  checkFrameAddress: ->
+    # Check if address and port of the ionic-view
+    # are the same of the ionic serve
+    frame = $(@).find('#frame')[0]
+    addressTmp = frame.src.replace(/http:\/\//, '').replace(/:.*\//, '')
+    portTmp = frame.src.replace(/http.*:/, '').replace(/:.*\//, '').replace(/\//, '')
+    portTmp = parseInt(portTmp)
+    return @address is addressTmp and @port is portTmp
 
   startServe: ->
-    me = @
     command = 'ionic'
-    args = ['serve', '-b']
+    args = ['serve', '-b', '--address', @address, '-p', @port]
     path = atom.project.getPaths()[0]
     options = {cwd: path}
     startedServer = new RegExp("Running dev server")
-    stdout = (output)->
+    frame = $(@).find('#frame')[0]
+
+    stdout = (output)=>
       if /error/ig.exec(output)
         alert output
-
-      # if startedServer.test(output)
-      #   setTimeout ->
-      #     atom.workspace.open "ionic://localhost:8100", split: "right"
-      #     me.openViewer()
-      #   , 3000
+      if startedServer.test(output)
+        setTimeout ->
+          frame.contentWindow.location.reload(true)
+        , 1000
     exit = (code)->
       alert code
-      console.log("ionic serve exited with #{code}")
+      console.error("ionic serve exited with #{code}")
 
-    @process = new BufferedProcess({command, args, options, stdout, exit})
-    atom.workspace.open "ionic://localhost:8100", split: "right"
+    @bufferedProcess = new BufferedProcess({command, args, options, stdout, exit})
+    return
 
-
-  # shutdownServe: ->
-  #   console.log @bufferedProcess
-  #   me = @
-  #   console.log me
-  #   if @bufferedProcess?
-  #     console.log "Killing"
-  #     @bufferedProcess.kill()
-  #   atom.workspace.destroyActivePaneItem()
+  shutdownServe: =>
+    if @bufferedProcess?
+      console.log "Killing"
+      @bufferedProcess.kill()
+    atom.workspace.destroyActivePaneItem()

@@ -1,41 +1,51 @@
-WebBrowserPreview = require './ionic-view'
-{CompositeDisposable} = require 'atom'
+{ CompositeDisposable } = require 'atom'
 url = require 'url'
+WebBrowserPreview = require './ionic-view'
 
 module.exports =
   ionicPreviewView: null
-
   config:
     autoStartServe:
       title: 'Autostart Serve'
       description: 'Automatically start ionic serve'
       type: 'boolean'
       default: false
+    addressCustom:
+      title: 'Address'
+      description: 'Changes address for ionic-view'
+      type: 'string'
+      default: 'localhost'
+    portCustom:
+      title: 'Port'
+      description: 'Changes port for ionic-view'
+      type: 'integer'
+      default: 8100
 
   activate: ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-workspace',
-      'ionic:preview': =>@preview()
+      'ionic:preview': => @preview()
 
-    @subscriptions.add atom.workspace.addOpener (uri)->
+    @subscriptions.add atom.workspace.addOpener (uri)=>
       try
-        {protocol, host, pathname} = url.parse(uri)
+        { protocol, host, pathname } = url.parse(uri)
       catch
-        returns
+        return
       return unless protocol is "ionic:"
 
       uri = url.parse(uri)
       uri.protocol = "http:"
       preview = new WebBrowserPreview(url: uri.format())
-
-      preview.openViewer()
-      console.log preview
+      if not atom.config.get 'ionic-preview.autoStartServe'
+        preview.openViewer()
+      else
+        preview.init()
       preview
 
   preview: ->
-    atom.workspace.open "ionic://localhost:8100", split: "right"
+    address =  atom.config.get('ionic-preview.addressCustom')
+    port = atom.config.get('ionic-preview.portCustom')
+    atom.workspace.open "ionic://#{address}:#{port}", split: "right"
 
-  # destroy: ->
-  #   console.log "Destroying"
-  #   @subscriptions.dispose()
-  #   preview.destroy()
+  destroy: ->
+    @subscriptions.dispose()

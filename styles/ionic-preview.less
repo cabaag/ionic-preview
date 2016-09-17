@@ -3,20 +3,25 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
-
 @iphone-width: 320px;
-
-#shutdown-serve {
-  float: right;
-  position: relative;
-}
-.ionic-preview {
+@iphone-height: 568px;
+#ionic-preview {
   display: flex;
+  flex-direction: column;
+}
+#header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  #address {
+    margin: 8px;
+    font-weight: bold;
+  }
 }
 .iphone {
-  position: relative;
-  width: 320px;
-  height: 568px;
-  display: block;
-  margin: auto;
+   position: relative;
+   width: @iphone-width;
+   height: @iphone-height;
+   display: block;
+   margin: auto;
 }
