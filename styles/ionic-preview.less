@@ -3,25 +3,56 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+
 @iphone-width: 320px;
 @iphone-height: 568px;
-#ionic-preview {
+
+.ionic-preview {
   display: flex;
   flex-direction: column;
-}
-#header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  #address {
-    margin: 8px;
-    font-weight: bold;
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 4px 0;
+    .address-bar {
+      padding: 8px;
+      margin: 8px;
+      background-color: #3d3d3d;
+      text-align: center;
+      font-size: 12px;
+      flex-grow: 1;
+      border: none;
+      &:focus {
+        // text-align: left;;
+        // color: @text-color;
+        background: #333;
+      }
+    }
+  }
+  button {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: @text-color;
+    margin-right: 10px;
+    &:hover {
+      color: @text-color-highlight;
+    }
+  }
+  #frame {
+    border: none;
+    &.iphone {
+      position: relative;
+      width: @iphone-width;
+      height: @iphone-height;
+      display: block;
+      margin: auto;
+    }
   }
 }
-.iphone {
-   position: relative;
-   width: @iphone-width;
-   height: @iphone-height;
-   display: block;
-   margin: auto;
-}
+// atom-pane:not(.active) {
+//   .address-bar {
+//     background-color: #3d3d3d !important;
+//   }
+// }
