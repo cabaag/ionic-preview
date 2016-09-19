@@ -24,3 +24,4 @@ Use `ionic serve -b` to start the livereload service without opening your browse
 ## TODO
 * Multiple views
 * Specs
+* Device orientation

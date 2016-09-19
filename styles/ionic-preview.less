@@ -40,14 +40,17 @@
       color: @text-color-highlight;
     }
   }
+  .frame-wrapper {
+    display: flex;
+    align-self: center;
+    flex-grow: 1;
+    align-items: center;
+  }
   #frame {
     border: none;
     &.iphone {
-      position: relative;
       width: @iphone-width;
       height: @iphone-height;
-      display: block;
-      margin: auto;
     }
   }
 }
