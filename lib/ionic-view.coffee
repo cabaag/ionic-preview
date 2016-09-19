@@ -18,7 +18,7 @@ class WebBrowserPreview extends View
         @button class: 'icon icon-home', click: "goToDefault"
         @button "Shutdown",
           id: "shutdown-serve"
-          click: "shutdownServe"
+          click: "clickShutdownButton"
       @subview 'frameView', new FrameView(params.url)
 
   serialize: ->
@@ -33,8 +33,9 @@ class WebBrowserPreview extends View
     # Open browser if auto start serve but theres and external existing
     # process of ionic serve else open browser or destroy pane
     if atom.config.get 'ionic-preview.autoStartServe'
-      alert "Starting serve"
-      @startServe()
+      http.get(@url).on 'error', (error)=>
+        alert "Starting serve"
+        @startServe()
     else
       http.get(@url).on 'error', (error)->
         alert("First start ionic serve")
@@ -82,11 +83,14 @@ class WebBrowserPreview extends View
 
     exit = (code) =>
       alert "Your first directory must be an ionic app"
-      @shutdownServe()
+      @clickShutdownButton()
 
     @bufferedProcess = new BufferedProcess({command, args, options, stdout, exit})
     return
 
+  clickShutdownButton: =>
+    atom.workspace.destroyActivePaneItem()
+
   shutdownServe: =>
-    @bufferedProcess.kill() if @bufferedProcess?
+    @bufferedProcess.kill() if @bufferedProcess
     return
