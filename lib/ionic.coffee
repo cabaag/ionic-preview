@@ -11,7 +11,6 @@ item = undefined
 module.exports = IonicPreview =
 
   activate: (state)->
-    console.log state
     atom.commands.add 'atom-workspace', CMD_TOOGLE, => @toggleView()
     return
 
@@ -28,7 +27,7 @@ module.exports = IonicPreview =
 
       atom.workspace.getActivePane().splitRight()
       pane = atom.workspace.getActivePane()
-      item = pane.addItem(view, 0)
+      item = pane.addItem(view, {index: 0})
 
       pane.activateItem(item)
     else
