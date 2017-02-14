@@ -1,0 +1,38 @@
+/**
+* Array of devices avaliable on ionic-preview
+* name width height
+*/
+
+@devices:
+  iphone-5 320 568,
+  iphone-6 375 667,
+  iphone-6-plus 414 763,
+
+  nexus-5x 412 732,
+  nexus-6p 412 732,
+  samsung-galaxy-s6 360 640,
+  ipad 768 1024,
+  ipad-pro 1024 1366;
+
+.make-devices-classes(@i: length(@devices)) when (@i > 0) {
+  .make-devices-classes(@i - 1);
+  @device: extract(@devices, @i);
+  @class: extract(@device, 1);
+  @width: extract(@device, 2);
+  @height: extract(@device, 3);
+  &.@{class} {
+    width: ~'@{width}px';
+    height: ~'@{height}px';
+    &.landscape {
+      width: ~'@{height}px';
+      height: ~'@{width}px';
+    }
+  }
+}
+
+.ionic-preview {
+  #frame {
+    border: none;
+ 	.make-devices-classes();
+  }
+}

@@ -4,55 +4,105 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-@iphone-width: 320px;
-@iphone-height: 568px;
-
 .ionic-preview {
   display: flex;
   flex-direction: column;
+
   .header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin: 4px 0;
+    min-height: 38px;
+
     .address-bar {
       padding: 8px;
-      margin: 8px;
       background-color: #3d3d3d;
       text-align: center;
       font-size: 12px;
       flex-grow: 1;
       border: none;
+
       &:focus {
         // text-align: left;;
         // color: @text-color;
-        background: #333;
+        background: @app-background-color;
+      }
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: @text-color;
+      margin: 8px;
+
+      &:hover {
+        color: @text-color-highlight;
+      }
+      &.rotate-device::before{
+        content: "\f0ec";
+      }
+      &.shutdown::before{
+        content: "\f057";
       }
     }
   }
-  button {
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
+
+  .dropdown-devices {
+    max-height: 0;
+    position: absolute;
+    top: 40px;
+    overflow: hidden;
+
+    background-color: @app-background-color;
     color: @text-color;
-    margin-right: 10px;
-    &:hover {
-      color: @text-color-highlight;
+    z-index: 1000;
+    transition: max-height 250ms linear;
+
+    &.active {
+      overflow: visible;
+      max-height: 200px;
     }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      list-style: none;
+      flex-direction: column;
+      max-height: inherit;
+      overflow: hidden;
+
+      li {
+        padding: 8px 16px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: @background-color-highlight;
+        }
+      }
+    }
+
   }
+
   .frame-wrapper {
     display: flex;
-    align-self: center;
     flex-grow: 1;
+    align-self: center;
+    overflow: hidden;;
+    padding-top: 10px;
+  }
+
+  .footer {
+    min-height: 38px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
     align-items: center;
+    background-color: @background-color-highlight;
   }
-  #frame {
-    border: none;
-    &.iphone {
-      width: @iphone-width;
-      height: @iphone-height;
-    }
-  }
+
 }
 // atom-pane:not(.active) {
 //   .address-bar {

@@ -6,7 +6,7 @@ class FrameView extends View
     @div class: 'frame-wrapper', =>
       @iframe
         id: "frame",
-        class: "iphone",
+        class: "iphone-5",
         src: url,
         sandbox: "allow-same-origin allow-scripts",
         outlet: "frame"
@@ -26,7 +26,7 @@ class FrameView extends View
 
   # Resize the iframe to match the container
   resizeFrame: =>
-    maxHeight = @parentView.height() - 70
+    maxHeight = @parentView.height() - 100
     if maxHeight? and maxHeight < @frame.height()
       @frame.css("transform", "scale(#{maxHeight / @frame.height()})")
 
@@ -48,3 +48,11 @@ class FrameView extends View
         @parentView.addressBar.val(location)
     , 200
     return
+
+  changeDeviceView: (id)=>
+    @frame.removeClass()
+    @frame.addClass(id)
+    # @resizeFrame()
+
+  rotate: ->
+    @frame.toggleClass('landscape')
